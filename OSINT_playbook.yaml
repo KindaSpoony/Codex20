@@ -1,0 +1,130 @@
+# Codex20 OSINT Investigative Playbook
+# This YAML playbook outlines the investigation workflow and rules for an OSINT agent.
+# It covers mission types, analysis stages, source credibility tiers, triangulation, escalation, and confidence scoring.
+mission_types:
+  # Supported mission types for investigations
+  - name: Identity verification
+    description: "Verifying an individual's or entity's identity via official records, cross-checking personal data, and confirming claimed attributes."
+  - name: Digital footprint mapping
+    description: "Gathering and mapping a subject's online presence (profiles, posts, public records) to understand their digital footprint."
+  - name: Threat pattern detection
+    description: "Identifying signs of malicious activities or threat actors within the data (e.g., disinformation campaigns, cyber threats, extremist content)."
+  - name: Credibility scoring
+    description: "Assessing the reliability of information and sources, and assigning credibility scores to findings based on evidence strength."
+  - name: Chronology validation
+    description: "Validating the timeline of events and information for chronological consistency and historical accuracy."
+
+analysis_plan:
+  # Sequential investigative stages and their objectives
+  - stage: "Data Collection"
+    steps:
+      - "Define the investigation scope and sub-objectives (break down the query into components:contentReference[oaicite:0]{index=0})."
+      - "Generate initial hypotheses for where information might be found (potential sources, keywords, etc.:contentReference[oaicite:1]{index=1})."
+      - "Gather data from diverse OSINT sources using available tools: web search engines (with advanced operators:contentReference[oaicite:2]{index=2}), news/media archives, public records databases, social media, academic journals, etc."
+      - "Adhere to ethical constraints during collection (no unlawful access, no privacy violations:contentReference[oaicite:3]{index=3})."
+      - "Log all collected information with source details for verification and citation in later stages."
+  - stage: "Source Evaluation"
+    steps:
+      - "Assess the credibility of each source using defined criteria (authority, evidence, bias, timeliness):contentReference[oaicite:4]{index=4}:contentReference[oaicite:5]{index=5}."
+      - "Categorize sources by reliability tier (Tier 1, 2, or 3) and assign credibility weight (see Source Tiers). Prioritize Tier 1 sources for key facts."
+      - "Cross-verify critical facts across multiple sources; if a claim appears in only one source, seek independent confirmation:contentReference[oaicite:6]{index=6}."
+      - "Be wary of sources that use sensational or extreme language; prefer clear, detailed sources over those with vague or dramatic claims:contentReference[oaicite:7]{index=7}."
+      - "Document each source's reliability and any noted biases (for transparency in reporting):contentReference[oaicite:8]{index=8}."
+  - stage: "Threat Analysis"
+    steps:
+      - "Scan collected data for indicators of threats or malicious intent (e.g., disinformation patterns, cyber-attack hints, violent or extremist language):contentReference[oaicite:9]{index=9}:contentReference[oaicite:10]{index=10}."
+      - "Identify potential threat actors or campaigns by matching patterns to known threat models (state-sponsored influence, cybercriminal, propaganda agents, etc.):contentReference[oaicite:11]{index=11}."
+      - "Flag any high-risk indicators (e.g., incitements of violence, credible threats to safety) for immediate escalation consideration:contentReference[oaicite:12]{index=12}."
+      - "Note emotionally charged or highly biased content as possible manipulation (propaganda or agitation) and ensure it doesn't skew the analysis:contentReference[oaicite:13]{index=13}."
+  - stage: "Temporal Validation"
+    steps:
+      - "Verify the chronological order of events and information. Ensure that timelines are consistent and no anachronisms or out-of-order events appear:contentReference[oaicite:14]{index=14}."
+      - "Cross-check dates and facts against known historical records or context to confirm accuracy (catch any contradictions with established history):contentReference[oaicite:15]{index=15}."
+      - "Compare emerging patterns with historical precedents to detect analogues; for example, recognize if a minor incident is snowballing in a pattern similar to 'unchecked escalation':contentReference[oaicite:16]{index=16} or if information sources are reinforcing each other in an 'echo chamber' effect:contentReference[oaicite:17]{index=17}."
+  - stage: "Triangulation and Scoring"
+    steps:
+      - "Corroborate each key finding with multiple independent sources. Require at least **two** credible sources (Tier 1 or 2) to confirm critical facts:contentReference[oaicite:18]{index=18}."
+      - "Analyze consistency across sources: if accounts conflict or vary significantly, investigate the discrepancies further and note them:contentReference[oaicite:19]{index=19}."
+      - "Apply source credibility weights (from Tier ratings) to inform an overall credibility score for each piece of information. Higher-tier sources contribute more to the score."
+      - "Assign a confidence level (High, Medium, Low) to each conclusion based on the strength of evidence and source agreement:contentReference[oaicite:20]{index=20}."
+  - stage: "Final Reporting"
+    steps:
+      - "Compile the findings into a clear, structured report, citing all sources for each key fact."
+      - "Summarize the verified facts and outcomes, and explicitly note any unresolved ambiguities or conflicting information (with context on which version is better supported):contentReference[oaicite:21]{index=21}."
+      - "Include commentary on source credibility where relevant (e.g., note if a particular detail comes from a low-tier source or single report):contentReference[oaicite:22]{index=22}."
+      - "Maintain an objective and neutral tone in the report. Even if source material was biased or emotional, the reporting should be factual and free of sensationalism:contentReference[oaicite:23]{index=23}."
+      - "Uphold ethical standards in the final output: respect privacy (omit personal data that isn't pertinent), avoid speculation or bias, and do not amplify unverified claims:contentReference[oaicite:24]{index=24}."
+
+# Source tiers with credibility weights
+source_tiers:
+  "Tier 1":
+    description: "High-credibility sources (official, primary, or verified data):contentReference[oaicite:25]{index=25}."
+    examples: ["Government reports and databases", "Academic peer-reviewed research", "Major established news outlets (for straight reporting)"]
+    credibility_weight: 1.0
+    notes: "Authoritative and reliable; factual accuracy is very high (little risk of error):contentReference[oaicite:26]{index=26}."
+  "Tier 2":
+    description: "Moderate-credibility sources (generally reliable but may have some bias or incomplete info)."
+    examples: ["Respected industry publications or expert blogs", "Crowdsourced knowledge bases (e.g., Wikipedia) with citation checks", "Local or lesser-known news sources"]
+    credibility_weight: 0.7
+    notes: "Useful for context and details; information is usually correct but should be corroborated (cross-checked for accuracy):contentReference[oaicite:27]{index=27}."
+  "Tier 3":
+    description: "Low-credibility or unverified sources (use only for leads, not as confirmed facts)."
+    examples: ["Social media posts and personal blogs", "Anonymous forums or sites with unclear provenance", "Unverified user-generated content"]
+    credibility_weight: 0.3
+    notes: "Highly unreliable on their own. Data from these sources must be treated as speculative until confirmed by higher-tier sources:contentReference[oaicite:28]{index=28}."
+
+# Triangulation requirements and methods
+triangulation:
+  minimum_independent_sources: 2
+  guideline: "At least two independent credible sources are required to confirm any critical piece of information:contentReference[oaicite:29]{index=29}."
+  single_source_policy: "If only a single source is available for a key fact, mark the information as unverified and seek additional corroboration:contentReference[oaicite:30]{index=30}."
+  conflict_resolution: "If different sources conflict on a fact, gather further evidence and note the discrepancy; do not assume either is correct until resolved:contentReference[oaicite:31]{index=31}."
+
+# Escalation rules for threat levels
+escalation_rules:
+  "threat_level: high":
+    conditions:
+      - "Credible threat to life or critical infrastructure identified:contentReference[oaicite:32]{index=32}"
+      - "Explicit incitement of violence or dangerous acts detected:contentReference[oaicite:33]{index=33}"
+      - "Disinformation likely to cause mass panic or harm (e.g., fake emergency alerts):contentReference[oaicite:34]{index=34}"
+      - "Evidence of large-scale coordinated manipulation or tampering (e.g., election interference):contentReference[oaicite:35]{index=35}"
+    action:
+      - "Immediately halt autonomous analysis and escalate to human review:contentReference[oaicite:36]{index=36}"
+      - "Transfer all evidence and context to a human analyst team for review"
+      - "Document the reason for escalation in the final report and system logs:contentReference[oaicite:37]{index=37}"
+  "threat_level: medium":
+    conditions:
+      - "Content that is ambiguous or raises concern but not an immediate severe threat"
+      - "Possible misinformation or sensitive content that requires careful handling:contentReference[oaicite:38]{index=38}"
+      - "Any scenario that presents an ethical dilemma or uncertainty in how to proceed:contentReference[oaicite:39]{index=39}"
+    action:
+      - "Flag for internal review and apply enhanced verification checks"
+      - "Proceed with analysis cautiously, double-checking facts and sources more rigorously"
+      - "If clarity is not achieved or risk increases, elevate to high threat level procedures"
+  "threat_level: low":
+    conditions:
+      - "No significant threat indicators present"
+      - "Routine informational queries with no sign of malicious content"
+      - "Standard investigation with normal risk profile"
+    action:
+      - "Continue normal autonomous analysis"
+      - "Use standard verification and ethical oversight processes"
+      - "No special escalation required (monitor as usual for any changes)"
+
+# Confidence scoring bands and criteria
+confidence_scoring:
+  High:
+    criteria:
+      - "Multiple independent Tier 1 or Tier 2 sources corroborate the information, and no credible source contradicts it"
+      - "Evidence is strong, direct, and recent (up-to-date data or well-established facts)"
+    rationale: "High confidence: the finding is well-supported by reliable evidence and cross-verified agreement:contentReference[oaicite:40]{index=40}."
+  Medium:
+    criteria:
+      - "Information is supported by at least one reputable source, but either only one high-tier source or a few mid-tier sources"
+      - "Some aspects may be unverified or slightly inconsistent, or sources have moderate reliability"
+    rationale: "Medium confidence: the finding has some support but lacks full confirmation; there is some uncertainty or reliance on moderate-quality sources."
+  Low:
+    criteria:
+      - "Information comes from a single source or mostly from Tier 3 (low credibility) sources"
+      - "There are unresolved conflicts between sources or significant doubts about authenticity"
+    rationale: "Low confidence: the finding is weakly supported and could be unreliable:contentReference[oaicite:41]{index=41}; it should be treated with caution and verified if possible."
