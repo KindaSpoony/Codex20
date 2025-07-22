@@ -1,0 +1,76 @@
+name: GPT Autonomous Agent
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+  pull_request:
+    types: [opened, edited, labeled]
+  push:
+    branches:
+      - main
+
+jobs:
+  cognitive-loop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Load Repository State
+        id: load-state
+        run: |
+          if [ -f state.json ]; then
+            echo "state=$(cat state.json | jq -c '.')" >> $GITHUB_ENV
+          else
+            echo "state={}" >> $GITHUB_ENV
+          fi
+
+      - name: Invoke ChatGPT
+        id: chatgpt
+        uses: cahaseler/openai-chatgpt-action@v1
+        with:
+          apiKey: ${{ secrets.OPENAI_API_KEY }}
+          prompt: >-
+            You are an autonomous GitHub agent. Analyze the event payload below and
+            provide a concise, actionable summary or recommendation based on
+            empirical clarity, logical consistency, historical context, and emotional nuance.
+            Event type: ${{ github.event_name }}
+            Event details: ${{ toJson(github.event) }}
+          input: '${{ env.state }}'
+          model: 'gpt-4'
+          temperature: 0.7
+          max_tokens: 300
+
+      - name: Update Reflex Arc
+        run: |
+          OUTPUT='${{ steps.chatgpt.outputs.completion }}'
+          echo "ChatGPT Output: $OUTPUT"
+
+          echo "$OUTPUT" > reflex_response.json
+
+          # Example Reflex Arc Decision Logic
+          if echo "$OUTPUT" | grep -q 'human review'; then
+            gh issue create --title "Agent Review Needed" \
+              --body "$OUTPUT" \
+              --label "agent-review"
+          elif [ "${{ github.event_name }}" == "issues" ]; then
+            ISSUE_NUMBER=${{ github.event.issue.number }}
+            gh issue comment "$ISSUE_NUMBER" --body "$OUTPUT"
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            gh pr comment "$PR_NUMBER" --body "$OUTPUT"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Persist Updated State
+        run: |
+          TIMESTAMP=$(date --iso-8601=seconds)
+          jq -n --arg ts "$TIMESTAMP" --arg output "${{ steps.chatgpt.outputs.completion }}" '{lastRun: $ts, lastOutput: $output}' > state.json
+
+      - name: Commit Reflex Response and State
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Agent update: Reflex response & state update"
+          file_pattern: 'reflex_response.json state.json'
