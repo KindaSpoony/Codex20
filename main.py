@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 # Import pipeline classes.  Adjust the module name if necessary.
-from osint_pipeline_modules import (
+from osint_pipeline import (
     PlaybookParser,
     Collector,
     SourceEvaluator,
