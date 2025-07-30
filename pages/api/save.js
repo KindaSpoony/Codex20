@@ -1,33 +1,30 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
+  const { report, repository, filepath } = req.body;
+
+  if (!report || !repository || !filepath) {
+    return res.status(400).json({ error: "Missing parameters in request body" });
   }
 
-  const { data } = req.body || {};
-  if (!data) {
-    res.status(400).json({ error: 'Missing data' });
-    return;
+  const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
+  const response = await fetch(`https://api.github.com/repos/${repository}/contents/${filepath}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${GITHUB_TOKEN}`,
+      "Content-Type": "application/json",
+      "Accept": "application/vnd.github+json"
+    },
+    body: JSON.stringify({
+      message: "Add daily GPT report",
+      content: Buffer.from(JSON.stringify(report, null, 2)).toString('base64'),
+    })
+  });
+
+  const data = await response.json();
+
+  if (response.status >= 400) {
+    res.status(response.status).json({ error: "GitHub API Error", details: data });
+  } else {
+    res.status(201).json({ fileUrl: data.content.html_url });
   }
-
-  const filePath = path.join(process.cwd(), 'saved.json');
-  let contents = [];
-
-  try {
-    await fs.access(filePath);
-    const dataStr = await fs.readFile(filePath, 'utf-8');
-    contents = JSON.parse(dataStr);
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      console.error('Failed to read existing saved.json:', err);
-    }
-  }
-
-  contents.push({ data, date: new Date().toISOString() });
-  await fs.writeFile(filePath, JSON.stringify(contents, null, 2));
-
-  res.status(200).json({ status: 'saved' });
 }
