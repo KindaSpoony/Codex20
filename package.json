@@ -1,17 +1,14 @@
 {
-  "name": "codex20",
+  "name": "codex20-api",
   "version": "1.0.0",
-  "description": "Minimal Next.js API setup for Codex20",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
-    "test": "echo \"No tests specified\""
+    "build": "next build"
   },
   "dependencies": {
-    "next": "13.4.19",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "openai": "3.2.1"
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
   }
 }
